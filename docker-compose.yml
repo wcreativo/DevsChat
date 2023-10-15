@@ -1,0 +1,47 @@
+version: "3.9"
+   
+services:
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+  db:
+    image: postgres
+    container_name: pgdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  django:
+    build: .
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6739/0
+
+    depends_on:
+      - db
+      - redis
+  celery:
+    restart: always
+    build: .
+    container_name: celery
+    command: celery -A config worker -l DEBUG
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - django
+      - redis
+volumes:
+  pgdata:
