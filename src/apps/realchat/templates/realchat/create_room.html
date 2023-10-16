@@ -6,14 +6,11 @@
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form_group">
-                <legend class="border_bottom mb-4">What chat room would you like to enter?</legend>
+                <legend class="border_bottom mb-4">Enter the room name</legend>
                 {{ form.as_p }}
             </fieldset>
             <div class="form-group">
                 <button class="btn btn-outline-info" type="submit">Enter</button>
-            </div>
-            <div class="border-top pt-3">
-                <small class="text-white pr-3">Or Create a New Room? </small><a class="ml-2 pl-3" href="{% url 'create'%}">Create New Room</a>
             </div>
         </form>
     </div>

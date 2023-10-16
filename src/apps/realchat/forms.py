@@ -8,3 +8,7 @@ class RoomSelectionForm(forms.Form):
         room_choices = kwargs.pop("room_choices", [])
         super(RoomSelectionForm, self).__init__(*args, **kwargs)
         self.fields["selected_room"].choices = room_choices
+
+
+class CreateRoomForm(forms.Form):
+    name = forms.CharField(max_length=255)
