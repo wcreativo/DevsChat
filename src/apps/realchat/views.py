@@ -1,9 +1,19 @@
-from django.shortcuts import render
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import RoomSelectionForm
+from .models import Chatrooms
 
 
 def index(request):
-    return render(request, "realchat/index.html")
+    chatrooms = Chatrooms.objects.all()
+    room_list = [(room.name, room.name) for room in chatrooms]
+    if request.method == "POST":
+        form = RoomSelectionForm(request.POST, room_choices=room_list)
+        if form.is_valid():
+            selected_room = form.cleaned_data["selected_room"]
+            return redirect("room", room_name=selected_room)
+    else:
+        form = RoomSelectionForm(room_choices=room_list)
+    return render(request, "realchat/index.html", {"form": form})
 
 
 def room(request, room_name):

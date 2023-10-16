@@ -1,3 +1,9 @@
 from django.db import models
+from apps.core.models import GenericModel
 
-# Create your models here.
+
+class Chatrooms(GenericModel):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
