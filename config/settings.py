@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "config",
     "apps.realchat",
     "channels",
+    "apps.users",
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,6 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
