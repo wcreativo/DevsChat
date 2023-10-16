@@ -34,6 +34,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
       - CELERY_BROKER=redis://redis:6379/0
+
       - CELERY_BACKEND=redis://redis:6739/0
 
     depends_on:
@@ -59,3 +60,4 @@ volumes:
 
 networks:
   networkChat:
+
