@@ -1,18 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib import messages
 from .forms import UserRegisterForm
+from django.views.generic.edit import FormView
 
 
-def register(request):
-    if request.method == "POST":
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            messages.success(
-                request, f"Your account has been created! You are now able to login!"
-            )
-            return redirect("login")
-    else:
-        form = UserRegisterForm(request.POST)
-    return render(request, "users/register.html", {"form": form})
+class RegisterView(FormView):
+    template_name = "users/register.html"
+    form_class = UserRegisterForm
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(
+            self.request, f"Your account has been created! You are now able to login!"
+        )
+        return redirect("login")
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
