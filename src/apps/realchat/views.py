@@ -1,31 +1,45 @@
 from django.shortcuts import render, redirect
 from .forms import RoomSelectionForm, CreateRoomForm
 from .models import Chatrooms
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
 
 
-def index(request):
-    chatrooms = Chatrooms.objects.all()
-    room_list = [(room.name, room.name) for room in chatrooms]
-    if request.method == "POST":
-        form = RoomSelectionForm(request.POST, room_choices=room_list)
-        if form.is_valid():
-            selected_room = form.cleaned_data["selected_room"]
-            return redirect("room", room_name=selected_room)
-    else:
-        form = RoomSelectionForm(room_choices=room_list)
-    return render(request, "realchat/index.html", {"form": form})
+class IndexView(FormView):
+    template_name = "realchat/index.html"
+    form_class = RoomSelectionForm
+    success_url = reverse_lazy("room")
+
+    def form_valid(self, form):
+        selected_room = form.cleaned_data["selected_room"]
+        return redirect("room", room_name=selected_room)
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        chatrooms = Chatrooms.objects.all()
+        room_list = [(room.name, room.name) for room in chatrooms]
+        form_kwargs["room_choices"] = room_list
+        return form_kwargs
 
 
-def room(request, room_name):
-    return render(request, "realchat/room.html", {"room_name": room_name})
+class RoomView(TemplateView):
+    template_name = "realchat/room.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["room_name"] = self.kwargs["room_name"]
+        return context
 
 
-def create_room(request):
-    if request.method == "POST":
-        form = CreateRoomForm(request.POST)
-        if form.is_valid():
-            room_name = form.cleaned_data["name"]
-            return redirect("room", room_name=room_name)
-    else:
-        form = CreateRoomForm()
-    return render(request, "realchat/create_room.html", {"form": form})
+class CreateRoomView(FormView):
+    template_name = "realchat/create_room.html"
+    form_class = CreateRoomForm
+
+    def form_valid(self, form):
+        room_name = form.cleaned_data["name"]
+        Chatrooms.objects.create(name=room_name)
+        return redirect("room", room_name=room_name)
+
+    def get_success_url(self):
+        return reverse_lazy("room", kwargs={"room_name": self.kwargs["room_name"]})
