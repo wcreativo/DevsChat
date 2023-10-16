@@ -171,9 +171,13 @@ LOGGING = {
     "handlers": {
         "file": {
             "level": "INFO",
-            "class": "logging.StreamHandler",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "apps/realchat/", "logs.log"),
+            "mode": "a",
+            "encoding": "utf-8",
             "formatter": "standard",
-            "filters": [],
+            "backupCount": 5,
+            "maxBytes": 1024 * 1024 * 5,
         },
     },
     "loggers": {
