@@ -23,9 +23,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
-        self.redis.rpush(self.room_group_name, message)
+        username = (
+            self.scope["user"].username if self.scope.get("user") else "Anonymous"
+        )
+        self.redis.rpush(self.room_group_name, f"{username}: {message}")
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat.message", "message": message}
+            self.room_group_name,
+            {"type": "chat.message", "message": f"{username}: {message}"},
         )
 
     async def chat_message(self, event):
