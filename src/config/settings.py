@@ -14,6 +14,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+import logging
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -156,3 +158,35 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "index"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "filters": [],
+        },
+    },
+    "loggers": {
+        logger_name: {
+            "level": "WARNING",
+            "propagate": True,
+        }
+        for logger_name in (
+            "django",
+            "django.request",
+            "django.db.backends",
+            "django.template",
+        )
+    },
+    "root": {"level": "DEBUG", "handlers": ["file"]},
+}

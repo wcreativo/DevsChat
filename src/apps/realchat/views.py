@@ -4,6 +4,9 @@ from .models import Chatrooms
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(FormView):
@@ -39,6 +42,9 @@ class CreateRoomView(FormView):
     def form_valid(self, form):
         room_name = form.cleaned_data["name"]
         Chatrooms.objects.create(name=room_name)
+        logger.info(
+            f'The user {self.request.user.username} has created the room "{room_name}"'
+        )
         return redirect("room", room_name=room_name)
 
     def get_success_url(self):
