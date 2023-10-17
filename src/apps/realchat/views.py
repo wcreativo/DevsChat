@@ -4,12 +4,13 @@ from .models import Chatrooms
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class IndexView(FormView):
+class IndexView(LoginRequiredMixin, FormView):
     template_name = "realchat/index.html"
     form_class = RoomSelectionForm
     success_url = reverse_lazy("room")
@@ -26,7 +27,7 @@ class IndexView(FormView):
         return form_kwargs
 
 
-class RoomView(TemplateView):
+class RoomView(LoginRequiredMixin, TemplateView):
     template_name = "realchat/room.html"
 
     def get_context_data(self, **kwargs):
@@ -35,7 +36,7 @@ class RoomView(TemplateView):
         return context
 
 
-class CreateRoomView(FormView):
+class CreateRoomView(LoginRequiredMixin, FormView):
     template_name = "realchat/create_room.html"
     form_class = CreateRoomForm
 

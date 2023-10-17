@@ -13,10 +13,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Grant permissions to logs.log
-        run:
-          chown -R wcreativo /app/apps/realchat
-          chmod 664 /app/apps/realchat/logs.log
       - name: Checkout
         uses: actions/checkout@v2
       - name: Test
