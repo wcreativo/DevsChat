@@ -1,4 +1,10 @@
 from django import forms
+from django.core.validators import RegexValidator
+
+name_validator = RegexValidator(
+    regex=r"^[A-Za-z0-9_-]+$",
+    message="Name can only contain letters, numbers, _, and -",
+)
 
 
 class RoomSelectionForm(forms.Form):
@@ -11,4 +17,4 @@ class RoomSelectionForm(forms.Form):
 
 
 class CreateRoomForm(forms.Form):
-    name = forms.CharField(max_length=255)
+    name = forms.CharField(max_length=255, validators=[name_validator])
