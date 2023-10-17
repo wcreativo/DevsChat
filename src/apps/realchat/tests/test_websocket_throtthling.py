@@ -8,6 +8,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from apps.realchat.middleware.websocket_throttling import WebSocketThrottlingMiddleware
 from apps.realchat.routing import websocket_urlpatterns
+import asyncio
 
 class WebSocketThrottlingMiddlewareTest(TestCase):
     async def test_chat_consumer(self):
@@ -28,3 +29,8 @@ class WebSocketThrottlingMiddlewareTest(TestCase):
         communicator = WebsocketCommunicator(application, "ws/chat/copernico/")
         connected, subprotocol = await communicator.connect()
         assert connected
+
+        
+        await communicator.send_json_to({"message": "Hello, world!"})
+        response = await communicator.receive_json_from()
+        assert response == {'message': ': Hello, world!'}

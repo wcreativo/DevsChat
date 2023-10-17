@@ -3,6 +3,10 @@ import redis
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -25,6 +29,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["message"]
         username = (
             self.scope["user"].username if self.scope.get("user") else "Anonymous"
+        )
+        logger.info(
+            f'The message {message} was sended by "{username}"'
         )
         self.redis.rpush(self.room_group_name, f"{username}: {message}")
         await self.channel_layer.group_send(
