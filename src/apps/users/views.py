@@ -10,9 +10,7 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(
-            self.request, f"Your account has been created! You are now able to login!"
-        )
+        messages.success(self.request, "Your account has been created! You are now able to login!")
         return redirect("login")
 
     def form_invalid(self, form):

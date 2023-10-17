@@ -1,14 +1,12 @@
 from django.test import TestCase
 from channels.testing import WebsocketCommunicator
-from apps.realchat.consumers import ChatConsumer
-from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from apps.realchat.middleware.websocket_throttling import WebSocketThrottlingMiddleware
 from apps.realchat.routing import websocket_urlpatterns
-import asyncio
+
 
 class WebSocketThrottlingMiddlewareTest(TestCase):
     async def test_chat_consumer(self):
@@ -18,11 +16,7 @@ class WebSocketThrottlingMiddlewareTest(TestCase):
             {
                 "http": django_asgi_app,
                 "websocket": AllowedHostsOriginValidator(
-                    AuthMiddlewareStack(
-                        WebSocketThrottlingMiddleware(
-                            URLRouter(websocket_urlpatterns), rate_limit=1
-                        )
-                    )
+                    AuthMiddlewareStack(WebSocketThrottlingMiddleware(URLRouter(websocket_urlpatterns), rate_limit=1))
                 ),
             }
         )
@@ -30,7 +24,6 @@ class WebSocketThrottlingMiddlewareTest(TestCase):
         connected, subprotocol = await communicator.connect()
         assert connected
 
-        
         await communicator.send_json_to({"message": "Hello, world!"})
         response = await communicator.receive_json_from()
-        assert response == {'message': ': Hello, world!'}
+        assert response == {"message": ": Hello, world!"}

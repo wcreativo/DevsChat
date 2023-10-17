@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from .forms import RoomSelectionForm, CreateRoomForm
 from .models import Chatrooms
 from django.urls import reverse_lazy
@@ -42,9 +42,7 @@ class CreateRoomView(FormView):
     def form_valid(self, form):
         room_name = form.cleaned_data["name"]
         Chatrooms.objects.create(name=room_name)
-        logger.info(
-            f'The user {self.request.user.username} has created the room "{room_name}"'
-        )
+        logger.info(f'The user {self.request.user.username} has created the room "{room_name}"')
         return redirect("room", room_name=room_name)
 
     def get_success_url(self):
